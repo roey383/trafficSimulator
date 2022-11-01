@@ -2,12 +2,17 @@ package roey.com.domain;
 
 public interface Car {
 
-    void accelerate(float acc);
+    void accelerate(Double acc);
 
     Double getCurrentSpeed();
 
     Double getLength();
 
-    String getId();
+    int getId();
+
+    Double getMaxAcc();
+    Double getMinAcc();
+
+    Double getLocation();
 
 }

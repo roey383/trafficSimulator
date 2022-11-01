@@ -10,4 +10,10 @@ import java.time.Duration;
 public class ConfigProperties {
 
     private Duration timeUnitCycle;
+    private Double laneLength;
+    private Double laneSpeedLimit;
+    private Double laneFriction;
+    private Double maxAcc;
+    private Double minAcc;
+    private Double responseTime;
 }

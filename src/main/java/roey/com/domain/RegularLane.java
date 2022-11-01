@@ -3,27 +3,42 @@ package roey.com.domain;
 import lombok.Builder;
 import lombok.Data;
 import roey.com.exceptions.CarCrashException;
+import roey.com.exceptions.CarNotInLaneException;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class RegularLane implements Lane {
 
-    private final Double length;
-    private final Map<String, CarInfo> carIdToCarInfo;
+    private final Double length; // Meter
+    private final LinkedHashMap<Integer, CarInfo> carIdToCarInfo;
     private CarInfo firstCar; // closest to end of lane
-    private CarInfo lastCar; // closest to start of lane
+    // closest to start of lane
+    private final Double speedLimit; // in KM
+    private final Double friction;
 
-    public RegularLane(Double length) {
+    public RegularLane(Double length, Double speedLimit, Double friction) {
         this.length = length;
-        this.carIdToCarInfo = new HashMap<>();
+        this.carIdToCarInfo = new LinkedHashMap<>();
         this.firstCar = null;
-        this.lastCar = null;
+        this.speedLimit = speedLimit;
+        this.friction = friction;
     }
 
     @Override
     public boolean insertCar(Car car, Double segment) {
         return false;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        if (firstCar == null){
+            return true;
+        }
+        var distToNext = firstCar.getLaneCord() - firstCar.getCar().getLength();
+        if (distToNext <= 0D){
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -33,7 +48,6 @@ public class RegularLane implements Lane {
         if (firstCar == null) {
             carInfo = CarInfo.builder().car(car).laneCord(0D).build();
             this.firstCar = carInfo;
-            this.lastCar = carInfo;
         } else {
             var distToNext = firstCar.getLaneCord() - firstCar.getCar().getLength();
             if (distToNext <= 0D){
@@ -43,7 +57,6 @@ public class RegularLane implements Lane {
                     .car(car)
                     .laneCord(0D)
                     .nextCar(firstCar)
-                    .distToNext(distToNext)
                     .build();
             firstCar.setPrevCar(carInfo);
             firstCar = carInfo;
@@ -54,50 +67,30 @@ public class RegularLane implements Lane {
 
     @Override
     public Double getDistToNextCar(Car car) {
-        if (carIdToCarInfo.get(car.getId()).hasNext()){
-            return carIdToCarInfo.get(car.getId()).getDistToNext();
+        if (!carIdToCarInfo.containsKey(car.getId())){
+            throw new CarNotInLaneException();
         }
-        return null;
-    }
-
-    @Override
-    public Double getSpeedOfNextCar(Car car) {
-        if (carIdToCarInfo.get(car.getId()).hasNext()){
-            return carIdToCarInfo.get(car.getId()).getCar().getCurrentSpeed();
-        }
-        return null;
+        return carIdToCarInfo.get(car.getId()).getDistToNext();
     }
 
     @Override
     public void advanceCar(Car car, Double distance) throws CarCrashException {
 
         var carInfo = carIdToCarInfo.get(car.getId());
-        // if has next
-        if (carInfo.hasNext()) {
-            if (distance > carInfo.getDistToNext()) {
+        // if collusion with next
+        if (carInfo.hasNext() && distance > carInfo.getDistToNext()) {
                 throw new CarCrashException("Car crashed the next car");
-            }
-            // set distances
-            carInfo.setDistToNext(carInfo.getDistToNext() + distance);
         }
         // if last car and off road
         else if (carInfo.getLaneCord() + distance - carInfo.getCar().getLength() > length) {
             if (carInfo.hasPrev()){
-                lastCar = carInfo.getPrevCar();
                 carInfo.getPrevCar().setNextCar(null);
             }
             else {
-                lastCar = null;
                 firstCar = null;
             }
             carIdToCarInfo.remove(carInfo.getCar().getId());
             return;
-        }
-
-        if (carInfo.hasPrev()){
-            // set distances
-            var prevCar = carInfo.getPrevCar();
-            prevCar.setDistToNext(prevCar.getDistToNext() + distance);
         }
 
         carInfo.setLaneCord(carInfo.getLaneCord() + distance);
@@ -108,6 +101,29 @@ public class RegularLane implements Lane {
         return carIdToCarInfo.containsKey(car.getId());
     }
 
+    @Override
+    public Double getSpeedLimit() {
+        return speedLimit;
+    }
+
+    @Override
+    public Double getFriction() {
+        return friction;
+    }
+
+    @Override
+    public Double getCarLocation(Car car) {
+        if (carIdToCarInfo.containsKey(car.getId())){
+            return carIdToCarInfo.get(car.getId()).getLaneCord();
+        }
+        return null;
+    }
+
+    @Override
+    public int getCarsCount() {
+        return carIdToCarInfo.size();
+    }
+
     @Builder
     @Data
     private static class CarInfo {
@@ -115,16 +131,22 @@ public class RegularLane implements Lane {
         private Car car;
         private Double laneCord;
         private CarInfo nextCar;
-        private Double distToNext;
         private CarInfo prevCar;
 
         boolean hasNext() {
-            return
-                    nextCar != null;
+            return nextCar != null;
         }
 
         boolean hasPrev() {
             return prevCar != null;
+        }
+
+        public Double getDistToNext() {
+            if (!hasNext()){
+                return null;
+            }
+            var nextCar = getNextCar();
+            return nextCar.getLaneCord() - nextCar.getCar().getLength() - getLaneCord();
         }
     }
 }

@@ -17,7 +17,7 @@ class RegularLaneTest {
 
     @BeforeEach
     void setup() {
-        lane = new RegularLane(1000D);
+        lane = new RegularLane(1000D, 100D, 0.7);
         configProperties.setTimeUnitCycle(Duration.ofMillis(1));
     }
 
