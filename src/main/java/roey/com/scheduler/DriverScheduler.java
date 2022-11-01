@@ -14,7 +14,7 @@ import java.util.Queue;
 
 @Configuration
 @EnableScheduling
-public class Scheduler {
+public class DriverScheduler {
 
     private final Long startTime = System.currentTimeMillis();
     private Map<Integer, Double> driverToSumSpeed = new HashMap<>();
@@ -24,6 +24,25 @@ public class Scheduler {
     Queue<Driver> drivers;
     @Autowired
     Lane lane;
+
+    @Scheduled(fixedRateString = "${time_unit_cycle}")
+    public void loopDrivers() {
+        Iterator<Driver> driverIterator = drivers.iterator();
+        while (driverIterator.hasNext()) {
+            var driver = driverIterator.next();
+            if (!lane.isCarExist(driver.getCar())) {
+                if (lane.isAvailable()) {
+                    lane.insertCarAtStart(driver.getCar());
+                } else {
+                    continue;
+                }
+            }
+            driver.takeAction();
+            if (driver.getCar().getLocation() == null) { // out of lane
+                driverIterator.remove();
+            }
+        }
+    }
 
     @Scheduled(fixedRate = 1000)
     public void logInfoOfTraffic() {
@@ -46,25 +65,6 @@ public class Scheduler {
             System.out.println(String.format("Id=%s, avgSpeed=%.2f", driverId,
                     driverToSumSpeed.get(driverId)*3.6/driverToCounter.get(driverId)));
         });
-    }
-
-    @Scheduled(fixedRateString = "${time_unit_cycle}")
-    public void loopDrivers() {
-        Iterator<Driver> driverIterator = drivers.iterator();
-        while (driverIterator.hasNext()) {
-            var driver = driverIterator.next();
-            if (!lane.isCarExist(driver.getCar())) {
-                if (lane.isAvailable()) {
-                    lane.insertCarAtStart(driver.getCar());
-                } else {
-                    continue;
-                }
-            }
-            driver.takeAction();
-            if (driver.getCar().getLocation() == null) { // out of lane
-                driverIterator.remove();
-            }
-        }
     }
 
 }
