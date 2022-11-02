@@ -1,4 +1,4 @@
-package roey.com.application;
+package roey.com;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import roey.com.configuration.ConfigProperties;
 import roey.com.domain.Driver;
 import roey.com.domain.Lane;
 import roey.com.domain.RegularLane;
@@ -14,7 +14,7 @@ import roey.com.domain.RegularLane;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@ComponentScan({"roey.com.controller", "roey.com.scheduler"})
+//@ComponentScan({"roey.com.controller", "roey.com.scheduler"})
 @SpringBootApplication
 @EnableConfigurationProperties(ConfigProperties.class)
 public class Application {

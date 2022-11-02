@@ -2,7 +2,7 @@ package roey.com.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import roey.com.application.ConfigProperties;
+import roey.com.configuration.ConfigProperties;
 import roey.com.exceptions.CarCrashException;
 
 import java.time.Duration;

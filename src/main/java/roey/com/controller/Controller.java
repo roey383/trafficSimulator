@@ -3,7 +3,7 @@ package roey.com.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import roey.com.application.ConfigProperties;
+import roey.com.configuration.ConfigProperties;
 import roey.com.domain.Driver;
 import roey.com.domain.Lane;
 import roey.com.domain.RegularCar;

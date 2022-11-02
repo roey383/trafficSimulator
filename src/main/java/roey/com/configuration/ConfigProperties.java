@@ -1,4 +1,4 @@
-package roey.com.application;
+package roey.com.configuration;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

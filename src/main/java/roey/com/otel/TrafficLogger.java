@@ -1,4 +1,4 @@
-package roey.com.scheduler;
+package roey.com.otel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -8,49 +8,29 @@ import roey.com.domain.Driver;
 import roey.com.domain.Lane;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 
 @Configuration
 @EnableScheduling
-public class DriverScheduler {
+public class TrafficLogger {
 
     private final Long startTime = System.currentTimeMillis();
-    private Map<Integer, Double> driverToSumSpeed = new HashMap<>();
-    private Map<Integer, Integer> driverToCounter = new HashMap<>();
+    private final Map<Integer, Double> driverToSumSpeed = new HashMap<>();
+    private final Map<Integer, Integer> driverToCounter = new HashMap<>();
 
     @Autowired
     Queue<Driver> drivers;
     @Autowired
     Lane lane;
 
-    @Scheduled(fixedRateString = "${time_unit_cycle}")
-    public void loopDrivers() {
-        Iterator<Driver> driverIterator = drivers.iterator();
-        while (driverIterator.hasNext()) {
-            var driver = driverIterator.next();
-            if (!lane.isCarExist(driver.getCar())) {
-                if (lane.isAvailable()) {
-                    lane.insertCarAtStart(driver.getCar());
-                } else {
-                    continue;
-                }
-            }
-            driver.takeAction();
-            if (driver.getCar().getLocation() == null) { // out of lane
-                driverIterator.remove();
-            }
-        }
-    }
-
     @Scheduled(fixedRate = 1000)
     public void logInfoOfTraffic() {
         System.out.println("Time lapsed= " + (System.currentTimeMillis() - startTime) / 1000 + ": Drivers:");
         drivers.forEach(driver -> {
-            System.out.println(String.format("Id=%s, cord=%.2f, speed=%.2f, distToNext=%.2f", driver.getId(),
+            System.out.printf("Id=%s, cord=%.2f, speed=%.2f, distToNext=%.2f%n", driver.getId(),
                     driver.getCar().getLocation(), driver.getCar().getCurrentSpeed()*3.6,
-                    lane.isCarExist(driver.getCar()) ? lane.getDistToNextCar(driver.getCar()) : null));
+                    lane.isCarExist(driver.getCar()) ? lane.getDistToNextCar(driver.getCar()) : null);
             if (!driverToSumSpeed.containsKey(driver.getId())){
                 driverToSumSpeed.put(driver.getId(), 0D);
                 driverToCounter.put(driver.getId(), 0);
@@ -61,10 +41,9 @@ public class DriverScheduler {
             }
         });
         System.out.println("Total cars:" + lane.getCarsCount());
-        driverToSumSpeed.keySet().forEach(driverId -> {
-            System.out.println(String.format("Id=%s, avgSpeed=%.2f", driverId,
-                    driverToSumSpeed.get(driverId)*3.6/driverToCounter.get(driverId)));
-        });
+        driverToSumSpeed.keySet().forEach(driverId ->
+                System.out.printf("Id=%s, avgSpeed=%.2f%n", driverId,
+                driverToSumSpeed.get(driverId)*3.6/driverToCounter.get(driverId)));
     }
 
 }

@@ -1,7 +1,7 @@
 package roey.com.domain;
 
 import lombok.Getter;
-import roey.com.application.ConfigProperties;
+import roey.com.configuration.ConfigProperties;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
