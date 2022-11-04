@@ -2,6 +2,7 @@ package roey.com.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -11,6 +12,7 @@ public class RegularDriver implements Driver {
     private final Integer id;
     @Getter
     @Setter
+    @Qualifier("multiSpeedLane")
     private Lane lane;
     private final Car car;
     private final Double responseTime;
@@ -47,10 +49,10 @@ public class RegularDriver implements Driver {
     private Double calculateAcceleration(Double distToCar) {
 
         var stoppingDist = calcStoppingDist();
-        if ((distToCar == null || stoppingDist < distToCar) && car.getCurrentSpeed() < lane.getSpeedLimit()) {
+        if ((distToCar == null || stoppingDist < distToCar) && car.getCurrentSpeed() < lane.getCarSpeedLimit(car)) {
             return car.getMaxAcc();
         }
-        if ((distToCar != null && stoppingDist > distToCar) || car.getCurrentSpeed() > lane.getSpeedLimit()) {
+        if ((distToCar != null && stoppingDist > distToCar) || car.getCurrentSpeed() > lane.getCarSpeedLimit(car)) {
             return car.getMinAcc();
         }
         // if equals
@@ -59,7 +61,7 @@ public class RegularDriver implements Driver {
 
     private Double calcStoppingDist() {
         var responseDist = responseTime * car.getCurrentSpeed();
-        var breakingDist = Math.pow(car.getCurrentSpeed() * 3.6, 2) / (254 * lane.getFriction());
+        var breakingDist = Math.pow(car.getCurrentSpeed() * 3.6, 2) / (254 * lane.getCarFriction(car));
         return responseDist + breakingDist;
     }
 }

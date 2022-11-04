@@ -1,6 +1,7 @@
 package roey.com.domain;
 
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import roey.com.configuration.ConfigProperties;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,6 +14,7 @@ public class RegularCar implements Car {
     private final Double timeUnit;
     @Getter
     private Double currentSpeed; // m/sec
+    @Qualifier("multiSpeedLane")
     private Lane lane;
     @Getter
     private final Double length; // meter

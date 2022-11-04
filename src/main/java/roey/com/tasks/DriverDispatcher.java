@@ -1,6 +1,7 @@
 package roey.com.tasks;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,6 +18,7 @@ public class DriverDispatcher {
     @Autowired
     Queue<Driver> drivers;
     @Autowired
+    @Qualifier("multiSpeedLane")
     Lane lane;
 
     @Scheduled(fixedRateString = "${time_unit_cycle}")

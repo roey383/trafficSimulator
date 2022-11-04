@@ -16,9 +16,9 @@ public interface Lane {
 
     boolean isCarExist(Car car);
 
-    Double getSpeedLimit();
+    Double getCarSpeedLimit(Car car);
 
-    Double getFriction();
+    Double getCarFriction(Car car);
 
     Double getCarLocation(Car car);
 
