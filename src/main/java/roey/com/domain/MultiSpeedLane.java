@@ -3,6 +3,11 @@ package roey.com.domain;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Assuming no big segments of speed per length ~ 10max
+ * Using Binary search O(log n) -> O(log 10) = O(1).
+ * Otherwise, would have keep speedLimit per CarInfo.
+ */
 public class MultiSpeedLane extends RegularLane {
 
     List<Double> lengths;
