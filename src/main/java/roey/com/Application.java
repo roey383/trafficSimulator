@@ -15,6 +15,7 @@ import roey.com.domain.MultiSpeedLane;
 import roey.com.domain.RegularLane;
 import roey.com.view.View;
 
+import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -58,7 +59,7 @@ public class Application {
 
     @Bean
     public View getView(ConfigProperties configProperties, Queue<Driver> drivers,
-                        @Qualifier("multiSpeedLane") Lane lane) {
+                        @Qualifier("multiSpeedLane") Lane lane) throws IOException {
         return new View(configProperties, drivers, lane);
     }
 

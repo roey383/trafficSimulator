@@ -6,13 +6,14 @@ import roey.com.domain.Lane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.Queue;
 
 public class View extends JFrame {
 
     Panel panel;
 
-    public View(ConfigProperties configProperties, Queue<Driver> drivers, Lane lane) throws HeadlessException {
+    public View(ConfigProperties configProperties, Queue<Driver> drivers, Lane lane) throws HeadlessException, IOException {
 
         this.panel = new Panel(configProperties, drivers, lane);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

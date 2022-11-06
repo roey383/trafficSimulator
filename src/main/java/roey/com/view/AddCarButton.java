@@ -29,7 +29,7 @@ public class AddCarButton extends JButton implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        var car = new RegularCar(lane, 4D, configProperties);
+        var car = new RegularCar(lane, configProperties.getCarLength(), configProperties);
         var driver = new RegularDriver(lane, car, configProperties.getResponseTime());
         drivers.add(driver);
     }
