@@ -27,8 +27,7 @@ public class RegularLane implements Lane {
     }
 
     @Override
-    public boolean insertCar(Car car, Double segment) {
-        return false;
+    public void insertCar(Car car, Double segment) {
     }
 
     @Override

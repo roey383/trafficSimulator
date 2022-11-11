@@ -9,10 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import roey.com.configuration.ConfigProperties;
-import roey.com.domain.Driver;
-import roey.com.domain.Lane;
-import roey.com.domain.MultiSpeedLane;
-import roey.com.domain.RegularLane;
+import roey.com.domain.*;
 import roey.com.view.View;
 
 import java.io.IOException;
@@ -52,6 +49,15 @@ public class Application {
     }
 
     @Bean
+    @Qualifier("arrayLane")
+    public Lane getArrayLane() {
+        return new ArrayLane(configProperties.getLaneLength().intValue(),
+                configProperties.getLaneSpeedLimit(),
+                configProperties.getLaneFriction()
+        );
+    }
+
+    @Bean
     @Qualifier("drivers")
     public Queue<Driver> getActiveDrivers() {
         return new ConcurrentLinkedQueue<>();
@@ -59,7 +65,7 @@ public class Application {
 
     @Bean
     public View getView(ConfigProperties configProperties, Queue<Driver> drivers,
-                        @Qualifier("multiSpeedLane") Lane lane) throws IOException {
+                        @Qualifier("arrayLane") Lane lane) throws IOException {
         return new View(configProperties, drivers, lane);
     }
 

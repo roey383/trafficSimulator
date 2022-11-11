@@ -18,7 +18,7 @@ public class Controller {
     @Autowired
     Queue<Driver> drivers;
     @Autowired
-    @Qualifier("multiSpeedLane")
+    @Qualifier("arrayLane")
     Lane lane;
     @Autowired
     ConfigProperties configProperties;

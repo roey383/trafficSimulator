@@ -2,7 +2,6 @@ package roey.com.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,7 +11,6 @@ public class RegularDriver implements Driver {
     private final Integer id;
     @Getter
     @Setter
-    @Qualifier("multiSpeedLane")
     private Lane lane;
     private final Car car;
     private final Double responseTime;

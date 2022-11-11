@@ -23,7 +23,7 @@ public class TrafficLogger {
     @Autowired
     Queue<Driver> drivers;
     @Autowired
-    @Qualifier("multiSpeedLane")
+    @Qualifier("arrayLane")
     Lane lane;
 
     @Scheduled(fixedRate = 1000)

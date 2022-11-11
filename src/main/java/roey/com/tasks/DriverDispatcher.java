@@ -18,7 +18,7 @@ public class DriverDispatcher {
     @Autowired
     Queue<Driver> drivers;
     @Autowired
-    @Qualifier("multiSpeedLane")
+    @Qualifier("arrayLane")
     Lane lane;
 
     @Scheduled(fixedRateString = "${time_unit_cycle}")

@@ -4,7 +4,7 @@ import roey.com.exceptions.CarCrashException;
 
 public interface Lane {
 
-    boolean insertCar(Car car, Double segment);
+    void insertCar(Car car, Double segment);
 
     boolean isAvailable();
 
