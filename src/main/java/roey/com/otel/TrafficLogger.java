@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import roey.com.domain.Driver;
-import roey.com.domain.Lane;
+import roey.com.domain.road.Road;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,19 +23,20 @@ public class TrafficLogger {
     @Autowired
     Queue<Driver> drivers;
     @Autowired
-    @Qualifier("arrayLane")
-    Lane lane;
+    @Qualifier("MultiLaneArray")
+    Road road;
 
     @Scheduled(fixedRate = 1000)
     public void logInfoOfTraffic() {
         System.out.println("Time lapsed= " + (System.currentTimeMillis() - startTime) / 1000 + ": Drivers:");
         drivers.forEach(driver -> {
-            System.out.printf("Id=%s, cord=%.2f, distToNext=%.2f, speed=%.2f, speedLimit=%.0f%n", driver.getId(),
+            System.out.printf("Id=%s, cord=%.2f, distToNext=%.2f, speed=%.2f, speedLimit=%.0f, lane=%d%n", driver.getId(),
                     driver.getCar().getLocation(),
-                    lane.isCarExist(driver.getCar()) ? lane.getDistToNextCar(driver.getCar()) : null,
+                    road.isCarExist(driver.getCar()) ? road.getDistToNextCar(driver.getCar()) : null,
                     driver.getCar().getCurrentSpeed() * 3.6,
-                    lane.getCarSpeedLimit(driver.getCar()) == null ? null :
-                            lane.getCarSpeedLimit(driver.getCar()) * 3.6);
+                    road.getCarSpeedLimit(driver.getCar()) == null ? null :
+                            road.getCarSpeedLimit(driver.getCar()) * 3.6,
+                    road.getCarLaneInd(driver.getCar()));
             if (!driverToSumSpeed.containsKey(driver.getId())) {
                 driverToSumSpeed.put(driver.getId(), 0D);
                 driverToCounter.put(driver.getId(), 0);
@@ -46,7 +47,7 @@ public class TrafficLogger {
                 driverToCounter.put(driver.getId(), driverToCounter.get(driver.getId()) + 1);
             }
         });
-        System.out.println("Total cars:" + lane.getCarsCount());
+        System.out.println("Total cars:" + road.getCarsCount());
         driverToSumSpeed.keySet().forEach(driverId ->
                 System.out.printf("Id=%s, avgSpeed=%.2f%n", driverId,
                         driverToSumSpeed.get(driverId) * 3.6 / driverToCounter.get(driverId)));

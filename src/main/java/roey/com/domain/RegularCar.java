@@ -2,6 +2,7 @@ package roey.com.domain;
 
 import lombok.Getter;
 import roey.com.configuration.ConfigProperties;
+import roey.com.domain.road.Road;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,21 +14,21 @@ public class RegularCar implements Car {
     private final Double timeUnit;
     @Getter
     private Double currentSpeed; // m/sec
-    private final Lane lane;
+    private final Road road;
     @Getter
     private final Double length; // meter
     private final Double maxAcc; // meter/sec^2
     private final Double minAcc;
 
-    public RegularCar(Lane lane, Double length, ConfigProperties configProperties) {
-        this(lane, length, configProperties.getMaxAcc(), configProperties.getMinAcc(),
+    public RegularCar(Road road, Double length, ConfigProperties configProperties) {
+        this(road, length, configProperties.getMaxAcc(), configProperties.getMinAcc(),
                 configProperties.getTimeUnitCycle().toMillis());
     }
 
-    public RegularCar(Lane lane, Double length, Double maxAcc, Double minAcc, long timeUnitMillis) {
+    public RegularCar(Road road, Double length, Double maxAcc, Double minAcc, long timeUnitMillis) {
         this.id = generateId();
         this.currentSpeed = 0D;
-        this.lane = lane;
+        this.road = road;
         this.length = length;
         this.timeUnit = timeUnitMillis / 1000D;
         this.maxAcc = maxAcc;
@@ -43,7 +44,7 @@ public class RegularCar implements Car {
 
         var dist = currentSpeed * timeUnit + 0.5 * acc * Math.pow(timeUnit, 2);
         currentSpeed = currentSpeed + acc * timeUnit;
-        lane.advanceCar(this, dist);
+        road.advanceCar(this, dist);
     }
 
     @Override
@@ -58,7 +59,12 @@ public class RegularCar implements Car {
 
     @Override
     public Double getLocation() {
-        return lane.getCarLocation(this);
+        return road.getCarLocation(this);
+    }
+
+    @Override
+    public int getLaneInd() {
+        return road.getCarLaneInd(this);
     }
 
 }

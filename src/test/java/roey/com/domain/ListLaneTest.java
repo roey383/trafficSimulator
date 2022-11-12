@@ -10,14 +10,14 @@ import java.time.Duration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class RegularLaneTest {
+class ListLaneTest {
 
-    RegularLane lane;
+    ListLane lane;
     ConfigProperties configProperties = new ConfigProperties();
 
     @BeforeEach
     void setup() {
-        lane = new RegularLane(1000D, 100D, 0.7);
+        lane = new ListLane(1000D, 100D, 0.7);
         configProperties.setTimeUnitCycle(Duration.ofMillis(1));
     }
 

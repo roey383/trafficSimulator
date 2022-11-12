@@ -2,6 +2,7 @@ package roey.com.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import roey.com.domain.road.Road;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -11,13 +12,13 @@ public class RegularDriver implements Driver {
     private final Integer id;
     @Getter
     @Setter
-    private Lane lane;
+    private Road road;
     private final Car car;
     private final Double responseTime;
 
-    public RegularDriver(Lane lane, Car car, Double responseTime) {
+    public RegularDriver(Road road, Car car, Double responseTime) {
         this.id = generateId();
-        this.lane = lane;
+        this.road = road;
         this.car = car;
         this.responseTime = responseTime;
     }
@@ -29,7 +30,7 @@ public class RegularDriver implements Driver {
     @Override
     public void takeAction() {
 
-        var dist = lane.getDistToNextCar(car);
+        var dist = road.getDistToNextCar(car);
         var acc = calculateAcceleration(dist);
         car.accelerate(acc);
     }
@@ -47,10 +48,10 @@ public class RegularDriver implements Driver {
     private Double calculateAcceleration(Double distToCar) {
 
         var stoppingDist = calcStoppingDist();
-        if ((distToCar == null || stoppingDist < distToCar) && car.getCurrentSpeed() < lane.getCarSpeedLimit(car)) {
+        if ((distToCar == null || stoppingDist < distToCar) && car.getCurrentSpeed() < road.getCarSpeedLimit(car)) {
             return car.getMaxAcc();
         }
-        if ((distToCar != null && stoppingDist > distToCar) || car.getCurrentSpeed() > lane.getCarSpeedLimit(car)) {
+        if ((distToCar != null && stoppingDist > distToCar) || car.getCurrentSpeed() > road.getCarSpeedLimit(car)) {
             return car.getMinAcc();
         }
         // if equals
@@ -59,7 +60,7 @@ public class RegularDriver implements Driver {
 
     private Double calcStoppingDist() {
         var responseDist = responseTime * car.getCurrentSpeed();
-        var breakingDist = Math.pow(car.getCurrentSpeed() * 3.6, 2) / (254 * lane.getCarFriction(car));
+        var breakingDist = Math.pow(car.getCurrentSpeed() * 3.6, 2) / (254 * road.getCarFriction(car));
         return responseDist + breakingDist;
     }
 }

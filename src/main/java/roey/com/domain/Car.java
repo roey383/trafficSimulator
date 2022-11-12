@@ -15,4 +15,5 @@ public interface Car {
 
     Double getLocation();
 
+    int getLaneInd();
 }

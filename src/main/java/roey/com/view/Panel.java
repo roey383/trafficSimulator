@@ -2,7 +2,7 @@ package roey.com.view;
 
 import roey.com.configuration.ConfigProperties;
 import roey.com.domain.Driver;
-import roey.com.domain.Lane;
+import roey.com.domain.road.Road;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,19 +10,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class Panel extends JPanel implements ActionListener {
 
+    private final java.util.List<Integer> LANES = java.util.List.of(273, 172, 65);
     Image carImage;
     AddCarButton addCarButton;
     java.util.Queue<Driver> drivers;
     ConfigProperties configProperties;
 
-    public Panel(ConfigProperties configProperties, java.util.Queue<Driver> drivers, Lane lane) throws IOException {
+    public Panel(ConfigProperties configProperties, java.util.Queue<Driver> drivers, Road road) throws IOException {
         this.drivers = drivers;
         this.configProperties = configProperties;
-        this.addCarButton = new AddCarButton(configProperties, drivers, lane);
+        this.addCarButton = new AddCarButton(configProperties, drivers, road);
         this.add(addCarButton);
         var laneLength =
                 configProperties.getLengths().stream().reduce(Double::sum).get().intValue() -
@@ -46,7 +46,7 @@ public class Panel extends JPanel implements ActionListener {
             if (driver.getCar().getLocation() != null) {
                 graphics2D.drawImage(carImage,
                         driver.getCar().getLocation().intValue() - carLength,
-                        273,
+                        LANES.get(driver.getCar().getLaneInd()),
                         carLength,
                         (int) (carLength / 2.3), null);
             }

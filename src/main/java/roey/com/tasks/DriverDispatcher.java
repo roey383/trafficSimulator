@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import roey.com.domain.Driver;
-import roey.com.domain.Lane;
+import roey.com.domain.road.Road;
 
 import java.util.Iterator;
 import java.util.Queue;
@@ -18,8 +18,8 @@ public class DriverDispatcher {
     @Autowired
     Queue<Driver> drivers;
     @Autowired
-    @Qualifier("arrayLane")
-    Lane lane;
+    @Qualifier("MultiLaneArray")
+    Road road;
 
     @Scheduled(fixedRateString = "${time_unit_cycle}")
     public void loopDrivers() {
@@ -39,9 +39,9 @@ public class DriverDispatcher {
     }
 
     private boolean isDriving(Driver driver) {
-        if (!lane.isCarExist(driver.getCar())) {
-            if (lane.isAvailable()) {
-                lane.insertCarAtStart(driver.getCar());
+        if (!road.isCarExist(driver.getCar())) {
+            if (road.isAvailable()) {
+                road.insertCarAtStart(driver.getCar());
             } else {
                 return false;
             }

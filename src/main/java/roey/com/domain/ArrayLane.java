@@ -6,18 +6,18 @@ import roey.com.exceptions.CarCrashException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ArrayLane implements Lane {
+public class ArrayLane extends OneLaneRoad {
 
     private final boolean[] occupied;
     @Getter
-    private final int length; // Meter
+    private final Double length; // Meter
     private final Map<Car, Double> carToLocation;
     private final Double speedLimit; // in KM
     private final Double friction;
 
     public ArrayLane(int length, Double speedLimit, Double friction) {
         this.occupied = new boolean[length];
-        this.length = length;
+        this.length = (double) length;
         this.speedLimit = speedLimit;
         this.friction = friction;
         this.carToLocation = new HashMap<>();
@@ -25,10 +25,11 @@ public class ArrayLane implements Lane {
 
     @Override
     public void insertCar(Car car, Double segment) {
-        var segRound = segment.intValue();
-        for (int i = segRound; i > segRound - car.getLength(); i--) {
+        var segRound = Math.min(length.intValue() - 1, segment.intValue());
+        for (int i = segRound; i > segRound - car.getLength() && i >= 0; i--) {
             if (occupied[i]) {
-                throw new CarCrashException("Location is occupied");
+                throw new CarCrashException("Location is occupied so can't insert car for carId = " + car.getId() +
+                        " at i=" + i);
             }
             occupied[i] = true;
         }
@@ -52,8 +53,13 @@ public class ArrayLane implements Lane {
 
     @Override
     public Double getDistToNextCar(Car car) {
+        return getDistToNextCar(carToLocation.get(car));
+    }
+
+    @Override
+    public Double getDistToNextCar(Double segment) {
         double maxDist = calcMaxStoppingDist();
-        var currentLocation = carToLocation.get(car).intValue();
+        var currentLocation = segment.intValue();
         for (int i = currentLocation + 1; i <= currentLocation + maxDist; i++) {
             if (i < length && occupied[i]) {
                 return (double) i;
@@ -73,7 +79,7 @@ public class ArrayLane implements Lane {
         var currentLocation = carToLocation.get(car);
         var currentLocationRound = currentLocation.intValue();
         var newLocation = currentLocation + distance;
-        var newLocationRound = (int)newLocation;
+        var newLocationRound = (int) newLocation;
         for (int i = currentLocationRound; i > currentLocationRound - car.getLength() && i >= 0; i--) {
             if (i < length) {
                 occupied[i] = false;
@@ -115,7 +121,34 @@ public class ArrayLane implements Lane {
     }
 
     @Override
+    public int getCarLaneInd(Car car) {
+        return 0;
+    }
+
+    @Override
     public int getCarsCount() {
         return carToLocation.size();
+    }
+
+    @Override
+    public void removeCar(Car car) {
+        var currentLocation = carToLocation.get(car);
+        var currentLocationRound = currentLocation.intValue();
+        for (int i = currentLocationRound; i > currentLocationRound - car.getLength() && i >= 0; i--) {
+            if (i < length) {
+                occupied[i] = false;
+            }
+        }
+        carToLocation.remove(car);
+    }
+
+    @Override
+    public boolean isFreeSegment(double x, double y) {
+        for (int i = (int) x; i <= y; i++) {
+            if (i >= 0 && i < length && occupied[i]) {
+                return true;
+            }
+        }
+        return false;
     }
 }

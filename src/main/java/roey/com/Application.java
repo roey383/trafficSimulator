@@ -10,9 +10,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import roey.com.configuration.ConfigProperties;
 import roey.com.domain.*;
+import roey.com.domain.road.MultiLaneArray;
+import roey.com.domain.road.Road;
 import roey.com.view.View;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -32,16 +35,16 @@ public class Application {
     }
 
     @Bean
-    @Qualifier("regularLane")
-    public Lane getLane() {
-        return new RegularLane(configProperties.getLaneLength(),
+    @Qualifier("ListLane")
+    public Road getListLaneRoad() {
+        return new ListLane(configProperties.getLaneLength(),
                 configProperties.getLaneSpeedLimit(),
                 configProperties.getLaneFriction());
     }
 
     @Bean
-    @Qualifier("multiSpeedLane")
-    public Lane getMultiSpeedLane() {
+    @Qualifier("MultiSpeedLane")
+    public Road getMultiSpeedLane() {
         return new MultiSpeedLane(configProperties.getLaneFriction(),
                 configProperties.getLengths(),
                 configProperties.getSpeeds()
@@ -49,12 +52,15 @@ public class Application {
     }
 
     @Bean
-    @Qualifier("arrayLane")
-    public Lane getArrayLane() {
-        return new ArrayLane(configProperties.getLaneLength().intValue(),
-                configProperties.getLaneSpeedLimit(),
-                configProperties.getLaneFriction()
-        );
+    @Qualifier("ArrayLane")
+    public Road getArrayLane() {
+        return getNewArrayLane();
+    }
+
+    @Bean
+    @Qualifier("MultiLaneArray")
+    public Road getMultiLaneArray() {
+        return new MultiLaneArray(List.of(getNewArrayLane(), getNewArrayLane(), getNewArrayLane()));
     }
 
     @Bean
@@ -65,8 +71,15 @@ public class Application {
 
     @Bean
     public View getView(ConfigProperties configProperties, Queue<Driver> drivers,
-                        @Qualifier("arrayLane") Lane lane) throws IOException {
-        return new View(configProperties, drivers, lane);
+                        @Qualifier("MultiLaneArray") Road road) throws IOException {
+        return new View(configProperties, drivers, road);
+    }
+
+    private ArrayLane getNewArrayLane() {
+        return new ArrayLane(configProperties.getLaneLength().intValue(),
+                configProperties.getLaneSpeedLimit(),
+                configProperties.getLaneFriction()
+        );
     }
 
 }

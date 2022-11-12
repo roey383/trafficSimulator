@@ -8,7 +8,10 @@ import roey.com.exceptions.CarNotInLaneException;
 
 import java.util.LinkedHashMap;
 
-public class RegularLane implements Lane {
+/**
+ * Implemented by Lists
+ */
+public class ListLane extends OneLaneRoad {
 
     @Getter
     private final Double length; // Meter
@@ -18,7 +21,7 @@ public class RegularLane implements Lane {
     private final Double speedLimit; // in KM
     private final Double friction;
 
-    public RegularLane(Double length, Double speedLimit, Double friction) {
+    public ListLane(Double length, Double speedLimit, Double friction) {
         this.length = length;
         this.carIdToCarInfo = new LinkedHashMap<>();
         this.firstCar = null;
@@ -68,9 +71,14 @@ public class RegularLane implements Lane {
     @Override
     public Double getDistToNextCar(Car car) {
         if (!carIdToCarInfo.containsKey(car.getId())) {
-            throw new CarNotInLaneException();
+            throw new CarNotInLaneException("Car is not in lane");
         }
         return carIdToCarInfo.get(car.getId()).getDistToNext();
+    }
+
+    @Override
+    public Double getDistToNextCar(Double segment) {
+        return null;
     }
 
     @Override
@@ -119,8 +127,23 @@ public class RegularLane implements Lane {
     }
 
     @Override
+    public int getCarLaneInd(Car car) {
+        return 0;
+    }
+
+    @Override
     public int getCarsCount() {
         return carIdToCarInfo.size();
+    }
+
+    @Override
+    public void removeCar(Car car) {
+        // TBD
+    }
+
+    @Override
+    public boolean isFreeSegment(double x, double y) {
+        return true; // TBD
     }
 
     @Builder

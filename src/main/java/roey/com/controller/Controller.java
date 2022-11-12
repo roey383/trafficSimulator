@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import roey.com.configuration.ConfigProperties;
 import roey.com.domain.Driver;
-import roey.com.domain.Lane;
 import roey.com.domain.RegularCar;
 import roey.com.domain.RegularDriver;
+import roey.com.domain.road.Road;
 
 import java.util.Queue;
 
@@ -18,8 +18,8 @@ public class Controller {
     @Autowired
     Queue<Driver> drivers;
     @Autowired
-    @Qualifier("arrayLane")
-    Lane lane;
+    @Qualifier("MultiLaneArray")
+    Road road;
     @Autowired
     ConfigProperties configProperties;
 
@@ -31,8 +31,8 @@ public class Controller {
     @GetMapping("/addDriver")
     public String addDriver() {
 
-        var car = new RegularCar(lane, 4D, configProperties);
-        var driver = new RegularDriver(lane, car, configProperties.getResponseTime());
+        var car = new RegularCar(road, 4D, configProperties);
+        var driver = new RegularDriver(road, car, configProperties.getResponseTime());
         drivers.add(driver);
         return "Driver added";
     }

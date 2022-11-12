@@ -8,7 +8,7 @@ import java.util.List;
  * Using Binary search O(log n) -> O(log 10) = O(1).
  * Otherwise, would have keep speedLimit per CarInfo.
  */
-public class MultiSpeedLane extends RegularLane {
+public class MultiSpeedLane extends ListLane {
 
     List<Double> lengths;
     List<Double> speeds;
