@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import roey.com.domain.Driver;
 import roey.com.domain.road.Road;
+import roey.com.view.PauseApp;
 
 import java.util.Iterator;
 import java.util.Queue;
@@ -20,9 +21,15 @@ public class DriverDispatcher {
     @Autowired
     @Qualifier("MultiLaneArray")
     Road road;
+    @Autowired
+    PauseApp pauseApp;
 
     @Scheduled(fixedRateString = "${time_unit_cycle}")
     public void loopDrivers() {
+        if (pauseApp.isPaused()){
+            return;
+        }
+
         Iterator<Driver> driverIterator = drivers.iterator();
         while (driverIterator.hasNext()) {
             var driver = driverIterator.next();

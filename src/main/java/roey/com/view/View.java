@@ -13,8 +13,10 @@ public class View extends JFrame {
 
     Panel panel;
 
-    public View(ConfigProperties configProperties, Queue<Driver> drivers, Road road) throws HeadlessException, IOException {
+    public View(ConfigProperties configProperties, Queue<Driver> drivers, Road road,
+                PauseApp pauseApp) throws HeadlessException, IOException {
 
+        this.addKeyListener(pauseApp);
         this.panel = new Panel(configProperties, drivers, road);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.add(panel);

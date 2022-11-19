@@ -12,6 +12,7 @@ import roey.com.configuration.ConfigProperties;
 import roey.com.domain.*;
 import roey.com.domain.road.MultiLaneArray;
 import roey.com.domain.road.Road;
+import roey.com.view.PauseApp;
 import roey.com.view.View;
 
 import java.io.IOException;
@@ -32,6 +33,11 @@ public class Application {
                 .headless(false)
                 .run(args);
         System.out.println("Spring app started");
+    }
+
+    @Bean
+    PauseApp getPauseApp(){
+        return new PauseApp();
     }
 
     @Bean
@@ -71,8 +77,8 @@ public class Application {
 
     @Bean
     public View getView(ConfigProperties configProperties, Queue<Driver> drivers,
-                        @Qualifier("MultiLaneArray") Road road) throws IOException {
-        return new View(configProperties, drivers, road);
+                        @Qualifier("MultiLaneArray") Road road, PauseApp pauseApp) throws IOException {
+        return new View(configProperties, drivers, road, pauseApp);
     }
 
     private ArrayLane getNewArrayLane() {

@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import roey.com.domain.Driver;
 import roey.com.domain.road.Road;
+import roey.com.view.PauseApp;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +26,15 @@ public class TrafficLogger {
     @Autowired
     @Qualifier("MultiLaneArray")
     Road road;
+    @Autowired
+    PauseApp pauseApp;
 
     @Scheduled(fixedRate = 1000)
     public void logInfoOfTraffic() {
+        if (pauseApp.isPaused()){
+            return;
+        }
+
         System.out.println("Time lapsed= " + (System.currentTimeMillis() - startTime) / 1000 + ": Drivers:");
         drivers.forEach(driver -> {
             System.out.printf("Id=%s, cord=%.2f, distToNext=%.2f, speed=%.2f, speedLimit=%.0f, lane=%d%n", driver.getId(),
