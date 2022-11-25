@@ -48,7 +48,6 @@ public class ArrayLane extends OneLaneRoad {
         }
         occupied[0] = true;
         carToLocation.put(car, 0D);
-
     }
 
     @Override
@@ -58,17 +57,17 @@ public class ArrayLane extends OneLaneRoad {
 
     @Override
     public Double getDistToNextCar(Double segment) {
-        double maxDist = calcMaxStoppingDist();
+        double maxDist = calcMaxStoppingDist(segment);
         var currentLocation = segment.intValue();
-        for (int i = currentLocation + 1; i <= currentLocation + maxDist; i++) {
-            if (i < length && occupied[i]) {
-                return (double) i;
+        for (int i = currentLocation + 1; i <= currentLocation + maxDist && i < length; i++) {
+            if (occupied[i]) {
+                return (double) i - currentLocation;
             }
         }
         return null;
     }
 
-    private Double calcMaxStoppingDist() {
+    Double calcMaxStoppingDist(Double segment) {
         var responseDist = 1.5 * speedLimit;
         var breakingDist = Math.pow(speedLimit * 3.6, 2) / (254 * friction);
         return responseDist + breakingDist;
